@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.soen_357_project.MainActivity">
+
+    <TextView
+        android:id="@+id/alarmSetForTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/AddAlarmButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="30dp"
+        android:text="No Alarm set"
+        android:textSize="30sp" />
+
+    <Button
+        android:id="@+id/AddAlarmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="Add Alarm" />
+
+    <Button
+        android:id="@+id/cancelAlarmButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/AddAlarmButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="27dp"
+        android:text="Cancel Alarm" />
+
+</RelativeLayout>
