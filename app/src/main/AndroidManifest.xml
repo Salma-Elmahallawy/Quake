@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.example.soen_357_project">
 
+    <uses-permission android:name="android.permission.WAKE_LOCK"/>
+
     <application
         android:name=".NotificationHelper"
         android:allowBackup="true"
@@ -19,6 +21,9 @@
         </activity>
 
         <receiver android:name=".AlertReceiver"/>
+
+        <service android:name=".AlarmSoundService"/>
+
     </application>
 
 </manifest>

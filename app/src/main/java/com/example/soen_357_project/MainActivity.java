@@ -19,6 +19,7 @@ import java.util.Calendar;
 public class MainActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
     private TextView alarmSetForTextView;
+    private PendingIntent pendingIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,6 +27,8 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         setContentView(R.layout.activity_main);
 
         alarmSetForTextView = findViewById(R.id.alarmSetForTextView);
+        Intent intent = new Intent(this, AlertReceiver.class);
+        pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
 
         Button addAlarmButton = findViewById(R.id.AddAlarmButton);
         addAlarmButton.setOnClickListener(v -> {
@@ -63,8 +66,6 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
     private void startAlarm(Calendar c) {
 
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlertReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
 
         //Choosing a time in the past, makes the alarm set for the next day
         if (c.before(Calendar.getInstance())) {
@@ -78,11 +79,13 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
 
     private void cancelAlarm() {
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(this, AlertReceiver.class);
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
 
         // cancels the alarm that has been defined
         alarmManager.cancel(pendingIntent);
+
+        // Stops the alarm defined in the AlarmSoundService Class
+        stopService(new Intent(MainActivity.this, AlarmSoundService.class));
+
         alarmSetForTextView.setText("Alarm canceled");
     }
 

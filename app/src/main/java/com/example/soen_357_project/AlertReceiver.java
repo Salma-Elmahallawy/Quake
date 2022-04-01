@@ -18,15 +18,15 @@ public class AlertReceiver extends BroadcastReceiver {
     // when the alarm goes off, this function is called to show the notification
     public void onReceive(Context context, Intent intent) {
 
-        Uri alarmRingtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+        // starts the alarm defined in the AlarmSoundService Class
+        context.startService(new Intent(context, AlarmSoundService.class));
 
         Notification notif = new NotificationCompat.Builder(context, CHANNEL_1_ID) // check if context is correct
                 .setSmallIcon(R.drawable.alarm_drawable)
-                .setContentText("ALARM!!!")
-                .setContentText("Alarm is working !!")
+                .setContentTitle("ALARM!!!")
+                .setContentText("Wake the fuck up !!")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
-                .setSound(alarmRingtone)
                 .build();
 
         NotificationManagerCompat notifManager = NotificationManagerCompat.from(context);
