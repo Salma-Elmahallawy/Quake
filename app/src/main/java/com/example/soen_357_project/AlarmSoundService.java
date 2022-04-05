@@ -3,15 +3,13 @@ package com.example.soen_357_project;
 import android.app.Service;
 import android.content.Intent;
 import android.media.MediaPlayer;
-import android.media.Ringtone;
-import android.media.RingtoneManager;
 import android.os.IBinder;
-
 import androidx.annotation.Nullable;
 
-public class AlarmSoundService extends Service {
 
-    private MediaPlayer mediaPlayer;
+public class AlarmSoundService extends Service{
+
+    private static MediaPlayer mediaPlayer = null;
 
     @Nullable
     @Override
@@ -23,10 +21,9 @@ public class AlarmSoundService extends Service {
     public void onCreate() {
         super.onCreate();
 
-        //Start media player
-        mediaPlayer = MediaPlayer.create(this, RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE));
-        mediaPlayer.start();
+        mediaPlayer = MediaPlayer.create(this, MainActivity.ringtone); // assigns the selected ringtone to be played
         mediaPlayer.setLooping(true);//Runs the alarm sound infinitely
+        mediaPlayer.start();  //Start media player
     }
 
     @Override
@@ -40,4 +37,5 @@ public class AlarmSoundService extends Service {
             mediaPlayer.release();
         }
     }
+
 }

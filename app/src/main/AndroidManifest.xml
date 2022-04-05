@@ -20,9 +20,13 @@
             </intent-filter>
         </activity>
 
-        <receiver android:name=".AlertReceiver"/>
+        <receiver android:name=".AlertReceiver"
+            android:enabled="true"
+            android:exported="true">
+        </receiver>
 
-        <service android:name=".AlarmSoundService"/>
+        <service android:name=".AlarmSoundService"
+            android:enabled="true"/>
 
     </application>
 

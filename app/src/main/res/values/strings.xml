@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">SOEN_357_Project</string>
+    <string name="AlarmTimeFile">AlarmTimeFile</string>
+    <string name="AlarmTime">AlarmTime</string>
 </resources>
