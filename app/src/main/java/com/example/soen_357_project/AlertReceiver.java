@@ -19,7 +19,7 @@ public class AlertReceiver extends BroadcastReceiver {
         Notification notif = new NotificationCompat.Builder(context, CHANNEL_1_ID) // check if context is correct
                 .setSmallIcon(R.drawable.alarm_drawable)
                 .setContentTitle("ALARM!!!")
-                .setContentText("Wake the fuck up !!")
+                .setContentText("Time to wake up !!")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
                 .setCategory(NotificationCompat.CATEGORY_ALARM)
                 .build();

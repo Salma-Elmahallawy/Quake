@@ -28,7 +28,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
     private TextView alarmSetForTextView;
     private PendingIntent pendingIntent;
     public static Uri ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-    private Calendar cal = null;
+    //private Calendar cal = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
             changeRingtone();
             return true;
         }
-
         return super.onOptionsItemSelected(item);
     }
 
@@ -85,7 +84,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
     // when a time is chosen by the user, this functions is what gets the time that has been set by the user
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
-        cal = Calendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
         cal.set(Calendar.MINUTE, minute);
         cal.set(Calendar.SECOND, 0);
@@ -124,21 +123,21 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
 
     private void cancelAlarm() {
 
-        if(cal == null){
-            Toast.makeText(this, "No Alarm Set", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        alarmManager.cancel(pendingIntent);
 
         // Stops the alarm defined in the AlarmSoundService Class
         stopService(new Intent(MainActivity.this, AlarmSoundService.class));
 
-        Toast.makeText(this, "Alarm Stopped", Toast.LENGTH_SHORT).show();
+        alarmSetForTextView.setText("Alarm Stopped");
 
-        // Re-adds the chosen time with 1 day added -> TO repeat the alarm infinitely.
-        cal.add(Calendar.DATE, 1);
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pendingIntent);
+        // Putting the Saved alarm inside a shared preference
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.AlarmTimeFile), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(getString(R.string.AlarmTime), "Alarm Stopped");
+        editor.apply();
+
 
     }
 
