@@ -2,38 +2,48 @@ package com.example.soen_357_project;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.constraintlayout.widget.ConstraintLayout;
+
+import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.RingtoneManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
-import android.widget.Toast;
-import com.kevalpatel.ringtonepicker.RingtonePickerDialog;
-import com.kevalpatel.ringtonepicker.RingtonePickerListener;
+
 import java.text.DateFormat;
 import java.util.Calendar;
+
+import com.kevalpatel.ringtonepicker.RingtonePickerDialog;
+import com.kevalpatel.ringtonepicker.RingtonePickerListener;
 
 public class MainActivity extends AppCompatActivity implements TimePickerDialog.OnTimeSetListener {
 
     private TextView alarmSetForTextView;
+    private TextView alarmOnTextView;
     private PendingIntent pendingIntent;
-    public static Uri ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
-    //private Calendar cal = null;
+    private ImageView ringtoneButton;
+    // private Switch alarmOnSwitch;
+    private ConstraintLayout bgd;
 
+    public static Uri ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+
+    @SuppressLint("ResourceType")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        bgd = findViewById(R.id.mainActivityLayout);
 
         alarmSetForTextView = findViewById(R.id.alarmSetForTextView);
 
@@ -41,7 +51,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.AlarmTimeFile), Context.MODE_PRIVATE);
         String alarmTime = sharedPreferences.getString(getString(R.string.AlarmTime), null);
         if(alarmTime == null){
-            alarmSetForTextView.setText("No Alarm Set");
+            alarmSetForTextView.setText("no alarm set");
         }else{
             alarmSetForTextView.setText(alarmTime);
         }
@@ -49,9 +59,19 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         Intent intent = new Intent(this, AlertReceiver.class);
         pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
 
+        alarmOnTextView = findViewById(R.id.alarmOnTextView);
+        alarmOnTextView.setText("");
+
+        ImageView ringtoneButton = findViewById(R.id.ringtoneButton);
+
+        ringtoneButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                changeRingtone();
+            }
+        });
+
         Button addAlarmButton = findViewById(R.id.AddAlarmButton);
         addAlarmButton.setOnClickListener(v -> {
-
             TimePickerFragment timePicker = new TimePickerFragment();
             timePicker.show(getSupportFragmentManager(), "time picker"); // shows the clock ( time picker ) when the button is clicked
         });
@@ -61,43 +81,28 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
                 cancelAlarm();
         });
 
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.toolbar_items, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-
-        if(item.getItemId() == R.id.changeRingtoneButton){
-            changeRingtone();
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
+        setBackground();
     }
 
     @Override
     // when a time is chosen by the user, this functions is what gets the time that has been set by the user
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 
-        Calendar cal = Calendar.getInstance();
-        cal.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        cal.set(Calendar.MINUTE, minute);
-        cal.set(Calendar.SECOND, 0);
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        c.set(Calendar.MINUTE, minute);
+        c.set(Calendar.SECOND, 0);
 
-        updateAlarmTimeText(cal);
-        startAlarm(cal);
+        updateAlarmTimeText(c);
+        startAlarm(c);
 
     }
 
     // Updates the TextView when the user chooses an alarm.
     private void updateAlarmTimeText(Calendar c) {
-        String alarmText = "Alarm Set For: ";
-        alarmText += DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime()); // Formats the chosen time and displays it on screen
+        // String alarmText = "Alarm Set For: ";
+        String alarmText = DateFormat.getTimeInstance(DateFormat.SHORT).format(c.getTime()); // Formats the chosen time and displays it on screen
+        alarmOnTextView.setText("alarm set for:");
         alarmSetForTextView.setText(alarmText);
 
         // Putting the Saved alarm inside a shared preference
@@ -105,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(getString(R.string.AlarmTime), alarmText);
         editor.apply();
+
     }
 
     private void startAlarm(Calendar c) {
@@ -116,13 +122,12 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
             c.add(Calendar.DATE, 1);
         }
 
-        // lets the alarm go off at the exact time specified by the user -> repeating every day
+        // lets the alarm go off at the exact time specified by the user
         alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
 
 
     private void cancelAlarm() {
-
         AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 
         alarmManager.cancel(pendingIntent);
@@ -130,17 +135,17 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         // Stops the alarm defined in the AlarmSoundService Class
         stopService(new Intent(MainActivity.this, AlarmSoundService.class));
 
-        alarmSetForTextView.setText("Alarm Stopped");
-
         // Putting the Saved alarm inside a shared preference
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.AlarmTimeFile), Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(getString(R.string.AlarmTime), "Alarm Stopped");
         editor.apply();
 
+        alarmOnTextView.setText("");
+
+        alarmSetForTextView.setText("no alarm set");
 
     }
-
 
     private void changeRingtone() {
 
@@ -186,5 +191,19 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
 
     }
 
+
+    private void setBackground() {
+        Calendar c = Calendar.getInstance();
+        int timeOfDay = c.get(Calendar.HOUR_OF_DAY);
+        System.out.println(timeOfDay);
+
+        if(timeOfDay >= 6 && timeOfDay <= 18){
+            // Drawable sunBackground = getDrawable(R.drawable.sun_sky_bgd);
+            bgd.setBackgroundResource(R.drawable.sky_sun_bgd);
+        }else {
+            // Drawable moonBackground = getDrawable(R.drawable.moon_sky_bgd);
+            bgd.setBackgroundResource(R.drawable.moon_sky_bgd);
+        }
+    }
 
 }
