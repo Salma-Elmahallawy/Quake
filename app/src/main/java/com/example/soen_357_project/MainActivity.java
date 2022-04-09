@@ -20,6 +20,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.TimePicker;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.util.Calendar;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
     private ConstraintLayout bgd;
 
     public static Uri ringtone = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_RINGTONE);
+    Button cancelAlarmButton ;
 
     @SuppressLint("ResourceType")
     @Override
@@ -44,20 +46,33 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         bgd = findViewById(R.id.mainActivityLayout);
-
+        cancelAlarmButton = findViewById(R.id.cancelAlarmButton);
         alarmSetForTextView = findViewById(R.id.alarmSetForTextView);
 
         // getting the saved alarm from the shared preference
         SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.AlarmTimeFile), Context.MODE_PRIVATE);
         String alarmTime = sharedPreferences.getString(getString(R.string.AlarmTime), null);
-        if(alarmTime == null){
-            alarmSetForTextView.setText("no alarm set");
-        }else{
+        if(alarmTime == null )
+        {
+            alarmSetForTextView.setText("No Alarm Set");
+            cancelAlarmButton.setVisibility(View.GONE);
+        }
+        else if(alarmTime.equals("Alarm Stopped"))
+        {
+            Toast.makeText(getApplicationContext(),"Alarm Stopped!", Toast.LENGTH_LONG);
+            alarmSetForTextView.setText("No Alarm Set");
+            cancelAlarmButton.setVisibility(View.GONE);
+
+        }
+        else
+            {
             alarmSetForTextView.setText(alarmTime);
+            cancelAlarmButton.setVisibility(View.VISIBLE);
+
         }
 
         Intent intent = new Intent(this, AlertReceiver.class);
-        pendingIntent = PendingIntent.getBroadcast(this, 1, intent, 0);
+        pendingIntent = PendingIntent.getBroadcast(this, 1, intent, PendingIntent.FLAG_IMMUTABLE);
 
         alarmOnTextView = findViewById(R.id.alarmOnTextView);
         alarmOnTextView.setText("");
@@ -76,9 +91,9 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
             timePicker.show(getSupportFragmentManager(), "time picker"); // shows the clock ( time picker ) when the button is clicked
         });
 
-        Button cancelAlarmButton = findViewById(R.id.cancelAlarmButton);
         cancelAlarmButton.setOnClickListener(v -> {
                 cancelAlarm();
+
         });
 
         setBackground();
@@ -95,6 +110,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
 
         updateAlarmTimeText(c);
         startAlarm(c);
+        cancelAlarmButton.setVisibility(View.VISIBLE);
 
     }
 
@@ -142,7 +158,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         editor.apply();
 
         alarmOnTextView.setText("");
-
+        cancelAlarmButton.setVisibility(View.GONE);
         alarmSetForTextView.setText("no alarm set");
 
     }
@@ -206,4 +222,9 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        finish();
+    }
 }
