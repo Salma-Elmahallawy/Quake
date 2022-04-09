@@ -56,6 +56,7 @@ public class GameActivity extends AppCompatActivity {
 
         SimpleDateFormat df = new SimpleDateFormat("M-d-yyyy", Locale.getDefault());
         String formattedDate = df.format(c);
+        System.out.println(formattedDate);
         firestore.collection("Quiz").document(formattedDate).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {

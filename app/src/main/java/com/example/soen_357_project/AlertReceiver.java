@@ -17,6 +17,7 @@ public class AlertReceiver extends BroadcastReceiver {
     // when the alarm goes off, this function is called to show the notification
     public void onReceive(Context context, Intent intent) {
 
+        System.out.println("entered on receive");
         context.startService(new Intent(context, AlarmSoundService.class));
         Intent intent_main_activity = new Intent(context, GameActivity.class);
         // set up a pending intent
@@ -32,9 +33,9 @@ public class AlertReceiver extends BroadcastReceiver {
 
         NotificationManagerCompat notifManager = NotificationManagerCompat.from(context);
         notifManager.notify(1, notif);
-//        Intent i = new Intent(context, GameActivity.class);
-//        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//        context.startActivity(i);
+        Intent i = new Intent(context, GameActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(i);
 
 
     }
