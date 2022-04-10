@@ -67,7 +67,9 @@ public class GameActivity extends AppCompatActivity {
 
                         questionsList = (List<String>) doc.get("Questions");
                         answersList = (List<String>) doc.get("Answers");
-                        questionText.setText(questionsList.remove(0));
+                        String question=questionsList.remove(0);
+                        questionText.setText(question);
+                        questionsList.add(question);
 
                     }else {
                         finish();
@@ -88,7 +90,9 @@ public class GameActivity extends AppCompatActivity {
                 System.out.println("In onclick");
                     if(answerField.getText().toString()!=""){
                         System.out.println(answerField.getText().toString());
-                        if(answerField.getText().toString().equals(answersList.remove(0))){
+                        String answer = answersList.remove(0);
+                        answersList.add(answer);
+                        if(answerField.getText().toString().equals(answer)){
                             System.out.println("In equal");
 
                             AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);

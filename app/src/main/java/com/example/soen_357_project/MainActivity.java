@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements TimePickerDialog.
         }
 
         // lets the alarm go off at the exact time specified by the user
-        alarmManager.setExact(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
+        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, c.getTimeInMillis(), pendingIntent);
     }
 
 
