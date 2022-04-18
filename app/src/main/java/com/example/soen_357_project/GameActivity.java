@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -74,9 +75,6 @@ public class GameActivity extends AppCompatActivity {
                     }else {
                         finish();
                     }
-                }else
-                {
-                    //Toast.makeText(SplashActivity.this, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -114,6 +112,7 @@ public class GameActivity extends AppCompatActivity {
 
                             if(!questionsList.isEmpty())
                             {
+                                Toast.makeText(GameActivity.this, "Incorrect Answer, Try Another Question!", Toast.LENGTH_SHORT).show();
                                 questionText.setText(questionsList.remove(0));
                                 answerField.setText("");
                             }
